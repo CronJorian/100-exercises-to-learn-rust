@@ -21,6 +21,8 @@ pub enum Status {
 }
 
 impl TicketStore {
+    #[must_use]
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
             tickets: Vec::new(),
@@ -29,6 +31,11 @@ impl TicketStore {
 
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
+    }
+
+    #[allow(clippy::iter_without_into_iter)]
+    pub fn iter(&self) -> std::slice::Iter<Ticket> {
+        self.tickets.iter()
     }
 }
 
