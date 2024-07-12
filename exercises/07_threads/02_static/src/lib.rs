@@ -4,7 +4,24 @@
 use std::thread;
 
 pub fn sum(slice: &'static [i32]) -> i32 {
-    todo!()
+    if slice.is_empty() {
+        return 0;
+    }
+
+    let num_threads = 8;
+    let max_chunk_size = slice.len().div_ceil(num_threads);
+    let mut handles = Vec::new();
+
+    for chunk in slice.chunks(max_chunk_size) {
+        let handle = thread::spawn(|| chunk.iter().sum::<i32>());
+
+        handles.push(handle);
+    }
+
+    handles
+        .into_iter()
+        .map(|handle| handle.join().unwrap_or_default())
+        .sum()
 }
 
 #[cfg(test)]

@@ -15,7 +15,30 @@
 use std::thread;
 
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+    if v.is_empty() {
+        return 0;
+    }
+
+    let num_threads = 8;
+    let chunk_size = v.len().div_ceil(num_threads);
+
+    let mut handles = Vec::new();
+
+    for (i, chunk) in v.chunks(chunk_size).enumerate() {
+        println!("Spawning thread {} with size {}", i + 1, chunk.len());
+        let v_chunk = chunk.to_vec();
+        let handle = thread::spawn(move || v_chunk.into_iter().sum::<i32>());
+        handles.push(handle);
+    }
+
+    handles
+        .into_iter()
+        .map(|handle| {
+            let subsum = handle.join().unwrap_or_default();
+            println!("Subsum is {}", subsum);
+            subsum
+        })
+        .sum()
 }
 
 #[cfg(test)]
